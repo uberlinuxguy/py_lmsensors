@@ -1,5 +1,5 @@
 """
-@package py-lmsensors
+@package py_lmsensors
 Python Bindings for libsensors3
 
 use the documentation of libsensors for the low level API.
@@ -12,6 +12,8 @@ see example.py for high level API usage.
 
 from ctypes import *
 import ctypes.util
+
+__version__ = "0.1"
 
 _libc = cdll.LoadLibrary(ctypes.util.find_library("c"))
 # see https://github.com/paroj/sensors.py/issues/1

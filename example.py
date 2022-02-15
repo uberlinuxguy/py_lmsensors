@@ -5,7 +5,7 @@
 @copyright: The MIT License (MIT) <http://opensource.org/licenses/MIT>
 """
 
-from py_lmsensors import sensors
+import py_lmsensors as sensors
 
 def print_feature(chip, feature):
     sfs = list(sensors.SubFeatureIterator(chip, feature)) # get a list of all subfeatures
