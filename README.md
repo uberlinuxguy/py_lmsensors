@@ -9,6 +9,12 @@ For documentation of the low level API see [sensors.h](https://github.com/groeck
 
 For a GUI application that displays the sensor readings and is based on this library, take a look at [sensors-unity](https://github.com/paroj/sensors-unity).
 
+Installation
+--------
+You can easily install the master branch of this repo by running the following pip command
+`pip install git+git://github.com/uberlinuxguy/py_lmsensors`
+
+
 Features
 --------
 * Full access to low level libsensors3 API
