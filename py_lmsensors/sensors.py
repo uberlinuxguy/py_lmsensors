@@ -1,5 +1,5 @@
 """
-@package sensors.py
+@package py-lmsensors
 Python Bindings for libsensors3
 
 use the documentation of libsensors for the low level API.
@@ -103,6 +103,19 @@ class feature(Structure):
     MAX_OTHER = 0x12
     BEEP_ENABLE = 0x18
 
+# units for the feature types above.  
+# Key values correspond to type values above
+# use sensors.get_units(feature.type) to get unit string
+_UNITS = {
+    0: "V",
+    1: "RPM",
+    2: "C",
+    3: "W",
+    4: "W",
+    5: "A",
+    6: "%"
+}
+
 class subfeature(Structure):
     _fields_ = [("name", c_char_p),
                 ("number", c_int),
@@ -143,6 +156,11 @@ def parse_chip_name(orig_name):
         raise_sensor_error(err, strerror(err))
     
     return ret
+
+def get_units(feature_type):
+    if feature_type in _UNITS:
+        return _UNITS[feature_type]
+    return ""
 
 def strerror(errnum):
     return _hdl.sensors_strerror(errnum).decode("utf-8")
@@ -288,3 +306,26 @@ class SubFeatureIterator:
     
     def next(self): # python2 compability
         return self.__next__()
+
+# utility function to get feature and value by feature label
+# the feature label must match EXACTLY
+
+def get_feature_value(chip, feature):
+    """
+    @return value
+    """
+    sfs = list(SubFeatureIterator(chip, feature))
+    return get_value(chip, sfs[0].number)
+
+def get_feature_alarmed(chip, feature):
+    """
+    @return bool true: alarmed, false: not alarmed.
+    """
+    sfs = list(SubFeatureIterator(chip, feature))
+    # allows us to remove the name prefix
+    prefix=len(feature.name)+1
+    for sf in sfs:
+        if sf.name[prefix:]=="alarm":
+            return get_value(chip, sf.number)
+    return 0
+    

@@ -5,15 +5,18 @@
 @copyright: The MIT License (MIT) <http://opensource.org/licenses/MIT>
 """
 
-import sensors
+from py_lmsensors import sensors
 
 def print_feature(chip, feature):
     sfs = list(sensors.SubFeatureIterator(chip, feature)) # get a list of all subfeatures
     
     label = sensors.get_label(chip, feature)
-    
+    unit = sensors.get_units(feature.type)
+
     skipname = len(feature.name)+1 # skip common prefix
     vals = [sensors.get_value(chip, sf.number) for sf in sfs]
+
+    
     
     if feature.type == sensors.feature.INTRUSION:
         # short path for INTRUSION to demonstrate type usage
@@ -24,8 +27,8 @@ def print_feature(chip, feature):
     names = [sf.name[skipname:].decode("utf-8") for sf in sfs]
     data = list(zip(names, vals))
     
-    str_data = ", ".join([e[0]+": "+str(e[1]) for e in data])
-    print("\t"+label+"\t"+str_data)
+    str_data = ", ".join([e[0]+": "+str(e[1])+unit for e in data])
+    print("\t"+label+"\t"+str_data+" Type: "+hex(feature.type))
 
 if __name__ == "__main__":
     sensors.init() # optionally takes config file
@@ -35,6 +38,13 @@ if __name__ == "__main__":
     for chip in sensors.ChipIterator(): # optional arg like "coretemp-*" restricts iterator
         print(sensors.chip_snprintf_name(chip)+" ("+sensors.get_adapter_name(chip.bus)+")")
         for feature in sensors.FeatureIterator(chip):
-            print_feature(chip, feature)
+            label = sensors.get_label(chip, feature)
+            unit = sensors.get_units(feature.type)
+            value = sensors.get_feature_value(chip, feature)
+            alarmed = " ALARMED" if sensors.get_feature_alarmed(chip, feature) else ""
+            if value == 0.0:
+                continue
+            print("\t"+label + ": " + str(value) + " " + unit + alarmed)
+            #print_feature(chip, feature)
         
     sensors.cleanup()
