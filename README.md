@@ -12,6 +12,7 @@ For a GUI application that displays the sensor readings and is based on this lib
 Installation
 --------
 You can easily install the master branch of this repo by running the following pip command
+
 `pip install git+git://github.com/uberlinuxguy/py_lmsensors`
 
 
